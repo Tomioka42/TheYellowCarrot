@@ -16,7 +16,7 @@ public class AppDbContext : DbContext
 	}
 
 	public DbSet<Recipe> Recipes { get; set; }
-	public DbSet<Tags> Tags { get; set; }
+	public DbSet<Tag> Tags { get; set; }
 	public DbSet<Ingredient> Ingredients { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -26,6 +26,69 @@ public class AppDbContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		modelBuilder.Entity<Ingredient>().HasData(new Ingredient()
+		{
+			IngredientId = 1,
+			Name = "Cheese",
+			Quantity = "100g",
+			RecipeId = 1
+		}, new Ingredient()
+		{
+			IngredientId = 2,
+			Name = "Bread",
+			Quantity = "2 Skivor",
+			RecipeId = 1
+		}, new Ingredient()
+		{
+			IngredientId = 3,
+			Name = "Butter",
+			Quantity = "30g",
+			RecipeId = 1
+		}, new Ingredient()
+		{
+			IngredientId = 4,
+			Name = "Macaroni",
+			Quantity = "150g",
+			RecipeId = 2
+		}, new Ingredient()
+		{
+			IngredientId = 5,
+			Name = "Meatballs",
+			Quantity = "100g",
+			RecipeId = 2
+		});
 
+		modelBuilder.Entity<Tag>().HasData(new Tag()
+		{
+			TagId = 1,
+			Name = "Vegetarian"
+		}, new Tag()
+		{
+			TagId = 2,
+			Name = "Vegan"
+		}, new Tag()
+		{
+			TagId = 3,
+			Name = "Glutenfri"
+		}, new Tag()
+		{
+			TagId = 4,
+			Name = "Laktosfri"
+		});
+
+
+		modelBuilder.Entity<Recipe>().HasData(new Recipe()
+		{
+			RecipeId = 1,
+			Name = "Grilled Cheese Sandwich",
+			CookTime = "15 min"
+
+		}, new Recipe()
+		{
+			RecipeId = 2,
+			Name = "Macaroni n Meatballs",
+			CookTime = "30 min",
+			TagId = 4
+		});
 	}
 }

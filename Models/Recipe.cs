@@ -11,6 +11,7 @@ public class Recipe
     public string Name { get; set; } = null!;
     public string? CookTime { get; set; }
     public List<Ingredient> Ingredients { get; set; } = new();
-    public List<Tags> Tags { get; set; } = new();
+    public int? TagId { get; set; }
+    public Tag? Tag { get; set; }
 
 }
