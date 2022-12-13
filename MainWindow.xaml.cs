@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using TheYellowCarrot.Data;
 using TheYellowCarrot.Models;
+using TheYellowCarrot.Repositories;
 
 namespace TheYellowCarrot
 {
@@ -49,13 +49,14 @@ namespace TheYellowCarrot
 
         }
 
+        // Uppdaterar Ui
         private void UpdateUi()
         {
             lvDisplayRecipes.Items.Clear();
 
             using (AppDbContext context = new())
             {
-                List<Recipe> recipes = context.Recipes.ToList();
+                List<Recipe> recipes = new RecipeRepo(context).GetRecipes();
 
                 foreach (Recipe recipe in recipes)
                 {
