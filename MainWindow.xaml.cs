@@ -55,13 +55,19 @@ namespace TheYellowCarrot
             }
             else
             {
-                using (AppDbContext context = new())
+                MessageBoxResult pr = MessageBox.Show("Are you sure you want to delete this recipe?", "?", MessageBoxButton.YesNo);
+
+                if (pr == MessageBoxResult.Yes)
                 {
-                    new RecipeRepo(context).DeleteRecipe(selectedRecipe);
-                    context.SaveChanges();
+                    using (AppDbContext context = new())
+                    {
+                        new RecipeRepo(context).DeleteRecipe(selectedRecipe);
+                        context.SaveChanges();
+                    }
+
+                    UpdateUi();
                 }
 
-                UpdateUi();
             }
         }
 
