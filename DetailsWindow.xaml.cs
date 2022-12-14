@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using TheYellowCarrot.Data;
 using TheYellowCarrot.Models;
+using TheYellowCarrot.Repositories;
 
 namespace TheYellowCarrot;
 
@@ -44,8 +45,16 @@ public partial class DetailsWindow : Window
         Ingredient ingredient = new();
         ingredient.Name = ingredientName;
         ingredient.Quantity = ingredientQuantity;
+        ingredient.RecipeId = _recipe.RecipeId;
+        ingredient.recipes = _recipe;
 
         _recipe.Ingredients.Add(ingredient);
+
+        using (AppDbContext context = new())
+        {
+            new IngredientRepo(context).AddIngredient(ingredient);
+            new RecipeRepo(context).AddIngredientToRecipe(ingredient);
+        }
 
         UpdateUi();
     }
@@ -54,6 +63,7 @@ public partial class DetailsWindow : Window
     {
         using (AppDbContext context = new())
         {
+            new RecipeRepo(context).GetRecipe(_recipe.RecipeId);
             context.SaveChanges();
         }
     }

@@ -97,8 +97,8 @@
             Margin="20,15" Click="btnAddToLvIngredient_Click" />
         <Button
             x:Name="btnAddRecipe"
-            Grid.Column="2"
-            Grid.Row="4"
+            Grid.Column="1"
+            Grid.Row="7"
             Content="Add Recipe"
             Background="Black"
             Foreground="White"
@@ -124,12 +124,25 @@
             Margin="7 15"
             BorderBrush="Black"
             BorderThickness="2"/>
+        <Label
+            x:Name="lbSelectedTag"
+            Grid.Column="2"
+            Grid.Row="3"
+            Margin="7 15"
+            BorderBrush="Black"
+            BorderThickness="2"/>
         <ComboBox
             x:Name="cbTags"
             Grid.Column="2"
-            Grid.Row="3"
-            BorderBrush="Black"
-            BorderThickness="2"
-            Margin="10 15"/>
+            Grid.Row="4"
+            Margin="7 15"/>
+        <Button
+            x:Name="btnAddTag"
+            Grid.Column="2"
+            Grid.Row="7"
+            Content="Add Tag"
+            Background="Black"
+            Foreground="White"
+            Margin="20,15" Click="btnAddTag_Click"/>
     </Grid>
 </Window>

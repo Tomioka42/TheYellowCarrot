@@ -11,6 +11,12 @@ public class IngredientRepo
         _context = context;
     }
 
+
+    public void AddIngredient(Ingredient ingredientToAdd)
+    {
+        _context.Ingredients.Add(ingredientToAdd);
+    }
+
     public void RemoveIngredient(Ingredient ingredientToRemove)
     {
         _context.Ingredients.Remove(ingredientToRemove);

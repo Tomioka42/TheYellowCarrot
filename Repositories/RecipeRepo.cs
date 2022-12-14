@@ -27,6 +27,11 @@ public class RecipeRepo
         return _context.Recipes.Include(r => r.Ingredients).Include(r => r.Tag).ToList();
     }
 
+    public void AddIngredientToRecipe(Ingredient ingredientToAdd)
+    {
+        _context.Recipes.Add(GetRecipe(ingredientToAdd.RecipeId));
+    }
+
     public void AddRecipe(Recipe recipeToAdd)
     {
         _context.Recipes.Add(recipeToAdd);
