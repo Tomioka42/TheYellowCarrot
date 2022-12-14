@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using TheYellowCarrot.Data;
 using TheYellowCarrot.Models;
@@ -25,16 +26,16 @@ public partial class DetailsWindow : Window
 
         UpdateUi();
 
-        // TODO Du ska göra så att delete och add knappen ska komma in
-
     }
 
+    // Låser upp alla knappar
     private void btnUnlock_Click(object sender, RoutedEventArgs e)
     {
         btnSave.IsEnabled = true;
         btnAddIngredient.IsEnabled = true;
     }
 
+    // Lägger till nya ingredienser i receptet och displayar den till listviewn
     private void btnAddIngredient_Click(object sender, RoutedEventArgs e)
     {
 
@@ -59,33 +60,56 @@ public partial class DetailsWindow : Window
         UpdateUi();
     }
 
+    // Sparar alla ändringar till databasen
     private void btnSave_Click(object sender, RoutedEventArgs e)
     {
-        using (AppDbContext context = new())
+        string newName = txtNewRecipeName.Text.Trim();
+
+        if (newName != null)
         {
-            new RecipeRepo(context).GetRecipe(_recipe.RecipeId);
-            context.SaveChanges();
+            _recipe.Name = newName;
+
+            using (AppDbContext context = new())
+            {
+                new RecipeRepo(context).UpdateRecipe(_recipe);
+                context.SaveChanges();
+            }
         }
+
     }
 
     // Tar bort ingrediensen från Databasen
     private void btnDelete_Click(object sender, RoutedEventArgs e)
     {
-        ListViewItem? selectedItem = lvDisplayIngredients.SelectedItem as ListViewItem;
-
-        Ingredient? selectedIngredient = selectedItem.Tag as Ingredient;
-
-        if (selectedItem != null)
+        try
         {
-            _recipe.Ingredients.Remove(selectedIngredient);
+            ListViewItem? selectedItem = lvDisplayIngredients.SelectedItem as ListViewItem;
 
-            using (AppDbContext context = new())
+            Ingredient? selectedIngredient = selectedItem.Tag as Ingredient;
+
+            if (selectedItem != null)
             {
-                context.Ingredients.Remove(selectedIngredient);
-            }
+                _recipe.Ingredients.Remove(selectedIngredient);
 
-            UpdateUi();
+                using (AppDbContext context = new())
+                {
+                    new IngredientRepo(context).RemoveIngredient(selectedIngredient);
+                    context.SaveChanges();
+                }
+
+                UpdateUi();
+            }
         }
+        catch (NullReferenceException ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+
+
 
     }
 
@@ -123,6 +147,7 @@ public partial class DetailsWindow : Window
         }
     }
 
+    // Sätter delete appen till enabled när man selectar ett item i listviewn
     private void lvDisplayIngredients_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         btnDelete.IsEnabled = true;

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using TheYellowCarrot.Data;
 using TheYellowCarrot.Models;
 
@@ -27,14 +29,34 @@ public class RecipeRepo
         return _context.Recipes.Include(r => r.Ingredients).Include(r => r.Tag).ToList();
     }
 
+    // Lägger till ingrediens till recipe
     public void AddIngredientToRecipe(Ingredient ingredientToAdd)
     {
-        _context.Recipes.Add(GetRecipe(ingredientToAdd.RecipeId));
+        try
+        {
+            _context.Recipes.Add(GetRecipe(ingredientToAdd.RecipeId));
+        }
+        catch (NullReferenceException ex)
+        {
+            MessageBox.Show($"Error {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.ToString());
+        }
+
     }
 
+    // Lägger till recipe
     public void AddRecipe(Recipe recipeToAdd)
     {
         _context.Recipes.Add(recipeToAdd);
+    }
+
+    // uppdaterar valda recipe
+    public void UpdateRecipe(Recipe recipeToUpdate)
+    {
+        _context.Recipes.Update(recipeToUpdate);
     }
 }
 

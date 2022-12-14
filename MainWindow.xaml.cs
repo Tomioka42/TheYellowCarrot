@@ -47,7 +47,22 @@ namespace TheYellowCarrot
 
         private void btnDeleteRecipe_Click(object sender, RoutedEventArgs e)
         {
+            Recipe selectedRecipe = (Recipe)((ListViewItem)lvDisplayRecipes.SelectedItem).Tag;
 
+            if (selectedRecipe == null)
+            {
+                MessageBox.Show("you need to select a recipe to delete it");
+            }
+            else
+            {
+                using (AppDbContext context = new())
+                {
+                    context.Recipes.Remove(selectedRecipe);
+                    context.SaveChanges();
+                }
+
+                UpdateUi();
+            }
         }
 
         // Uppdaterar Ui

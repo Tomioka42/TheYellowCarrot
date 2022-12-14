@@ -28,9 +28,9 @@ namespace TheYellowCarrot
         private void btnAddRecipe_Click(object sender, RoutedEventArgs e)
         {
             string recipeName = txtRecipeName.Text;
-            string? selectedTag = lbSelectedTag.ToString();
+            Tag selectedTag = (Tag)((ComboBoxItem)cbTags.SelectedItem).Tag;
 
-            if (string.IsNullOrEmpty(recipeName) || string.IsNullOrEmpty(selectedTag))
+            if (string.IsNullOrEmpty(recipeName) || selectedTag == null)
             {
                 MessageBox.Show("If you want to save the recipe, you need to enter all the fields!");
             }
@@ -42,7 +42,7 @@ namespace TheYellowCarrot
                     newRecipe.Name = recipeName;
                     newRecipe.Ingredients = ingredients;
 
-                    newRecipe.Tag.Name = selectedTag;
+                    newRecipe.TagId = selectedTag.TagId;
 
                     new RecipeRepo(context).AddRecipe(newRecipe);
                     context.SaveChanges();
