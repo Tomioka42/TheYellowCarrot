@@ -38,42 +38,67 @@ public partial class DetailsWindow : Window
     // Lägger till nya ingredienser i receptet och displayar den till listviewn
     private void btnAddIngredient_Click(object sender, RoutedEventArgs e)
     {
-
-        var ingredientName = txtNewIngredient.Text.Trim();
-        var ingredientQuantity = txtNewQuantity.Text.Trim();
-
-
-        Ingredient ingredient = new();
-        ingredient.Name = ingredientName;
-        ingredient.Quantity = ingredientQuantity;
-        ingredient.RecipeId = _recipe.RecipeId;
-        ingredient.recipes = _recipe;
-
-        _recipe.Ingredients.Add(ingredient);
-
-        using (AppDbContext context = new())
+        try
         {
-            new IngredientRepo(context).AddIngredient(ingredient);
-            new RecipeRepo(context).AddIngredientToRecipe(ingredient);
+            var ingredientName = txtNewIngredient.Text.Trim();
+            var ingredientQuantity = txtNewQuantity.Text.Trim();
+
+
+            Ingredient ingredient = new();
+            ingredient.Name = ingredientName;
+            ingredient.Quantity = ingredientQuantity;
+            ingredient.RecipeId = _recipe.RecipeId;
+            ingredient.recipes = _recipe;
+
+            _recipe.Ingredients.Add(ingredient);
+
+            using (AppDbContext context = new())
+            {
+                new IngredientRepo(context).AddIngredient(ingredient);
+                new RecipeRepo(context).AddIngredientToRecipe(ingredient);
+            }
+
+            UpdateUi();
+        }
+        catch (NullReferenceException ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
         }
 
-        UpdateUi();
     }
 
     // Sparar alla ändringar till databasen
     private void btnSave_Click(object sender, RoutedEventArgs e)
     {
-        string newName = txtNewRecipeName.Text.Trim();
-
-        if (newName != null)
+        try
         {
-            _recipe.Name = newName;
-
-            using (AppDbContext context = new())
+            if (txtNewRecipeName.Text.Length > 3)
             {
-                new RecipeRepo(context).UpdateRecipe(_recipe);
-                context.SaveChanges();
+                string newName = txtNewRecipeName.Text;
+
+                if (newName != null)
+                {
+                    _recipe!.Name = newName;
+
+                    using (AppDbContext context = new())
+                    {
+                        new RecipeRepo(context).UpdateRecipe(_recipe);
+                        context.SaveChanges();
+                    }
+                }
             }
+        }
+        catch (NullReferenceException ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
         }
 
     }
@@ -85,15 +110,15 @@ public partial class DetailsWindow : Window
         {
             ListViewItem? selectedItem = lvDisplayIngredients.SelectedItem as ListViewItem;
 
-            Ingredient? selectedIngredient = selectedItem.Tag as Ingredient;
+            Ingredient? selectedIngredient = selectedItem?.Tag as Ingredient;
 
             if (selectedItem != null)
             {
-                _recipe.Ingredients.Remove(selectedIngredient);
+                _recipe?.Ingredients.Remove(selectedIngredient!);
 
                 using (AppDbContext context = new())
                 {
-                    new IngredientRepo(context).RemoveIngredient(selectedIngredient);
+                    new IngredientRepo(context).RemoveIngredient(selectedIngredient!);
                     context.SaveChanges();
                 }
 
@@ -141,9 +166,9 @@ public partial class DetailsWindow : Window
                 lvDisplayIngredients.Items.Add(item);
             }
         }
-        if (_recipe?.Tag != null)
+        if (_recipe?.Tags != null)
         {
-            lbTag.Content = _recipe.Tag.Name.ToString();
+            lbTag.Content = _recipe.Tags.Name.ToString();
         }
     }
 

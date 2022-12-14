@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
 		optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=TheYellowCarrotDb;Trusted_Connection=True;");
 	}
 
+	// Creatar alla ingredienser,Tags och recept när databasen skapas
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<Ingredient>().HasData(new Ingredient()

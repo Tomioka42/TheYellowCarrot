@@ -20,13 +20,13 @@ public class RecipeRepo
     // Get's RecipeId, Tag and Ingredients
     public Recipe? GetRecipe(int id)
     {
-        return _context.Recipes.Include(r => r.Ingredients).Include(r => r.Tag).FirstOrDefault(r => r.RecipeId == id);
+        return _context.Recipes.Include(r => r.Ingredients).Include(r => r.Tags).FirstOrDefault(r => r.RecipeId == id);
     }
 
     // Hämtar ingredients och Tag från recipe
     public List<Recipe> GetRecipes()
     {
-        return _context.Recipes.Include(r => r.Ingredients).Include(r => r.Tag).ToList();
+        return _context.Recipes.Include(r => r.Ingredients).Include(r => r.Tags).ToList();
     }
 
     // Lägger till ingrediens till recipe
@@ -57,6 +57,12 @@ public class RecipeRepo
     public void UpdateRecipe(Recipe recipeToUpdate)
     {
         _context.Recipes.Update(recipeToUpdate);
+    }
+
+    // Tar bort recept från databasen
+    public void DeleteRecipe(Recipe recipeToRemove)
+    {
+        _context.Recipes.Remove(recipeToRemove);
     }
 }
 

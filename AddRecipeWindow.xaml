@@ -70,7 +70,7 @@
             Grid.RowSpan="3"
             BorderBrush="Black"
             BorderThickness="2"
-            Margin="5"/>
+            Margin="5" />
         <Label
             Grid.Column="3"
             Grid.Row="5"
@@ -94,7 +94,7 @@
             Content="Add to list"
             Background="Black"
             Foreground="White"
-            Margin="20,15" Click="btnAddToLvIngredient_Click" />
+            Margin="20,15" Click="btnAddToLvIngredient_Click"/>
         <Button
             x:Name="btnAddRecipe"
             Grid.Column="1"

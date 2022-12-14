@@ -57,7 +57,7 @@ namespace TheYellowCarrot
             {
                 using (AppDbContext context = new())
                 {
-                    context.Recipes.Remove(selectedRecipe);
+                    new RecipeRepo(context).DeleteRecipe(selectedRecipe);
                     context.SaveChanges();
                 }
 

@@ -19,39 +19,70 @@ namespace TheYellowCarrot
         {
             InitializeComponent();
 
-
-
             UpdateUi();
 
         }
 
+
+        // Click event som lägger till ett recept i databasen
         private void btnAddRecipe_Click(object sender, RoutedEventArgs e)
         {
-            string recipeName = txtRecipeName.Text;
-            Tag selectedTag = (Tag)((ComboBoxItem)cbTags.SelectedItem).Tag;
 
-            if (string.IsNullOrEmpty(recipeName) || selectedTag == null)
+            if (ingredients.Count == 0 && txtRecipeName.Text.Length == 0)
             {
-                MessageBox.Show("If you want to save the recipe, you need to enter all the fields!");
+                MessageBox.Show("You need to enter a name and some ingredients to add the recipe");
             }
-            else
+            else if (ingredients.Count > 0 && txtRecipeName.Text.Length > 0)
             {
-                using (AppDbContext context = new())
+
+                if (cbTags.SelectedItem == null)
                 {
-                    Recipe newRecipe = new();
-                    newRecipe.Name = recipeName;
-                    newRecipe.Ingredients = ingredients;
+                    string recipeName = txtRecipeName.Text;
 
-                    newRecipe.TagId = selectedTag.TagId;
+                    using (AppDbContext context = new())
+                    {
+                        Recipe newRecipe = new();
+                        newRecipe.Name = recipeName;
+                        newRecipe.Ingredients = ingredients;
 
-                    new RecipeRepo(context).AddRecipe(newRecipe);
-                    context.SaveChanges();
+                        newRecipe.TagId = null;
+
+                        new RecipeRepo(context).AddRecipe(newRecipe);
+                        context.SaveChanges();
+
+                        MainWindow mainWindow = new();
+                        mainWindow.Show();
+                        Close();
+                    }
+
                 }
+                else if (cbTags.SelectedItem != null)
+                {
+                    string recipeName = txtRecipeName.Text;
+                    Tag selectedTag = (Tag)((ComboBoxItem)cbTags.SelectedItem).Tag;
 
-                MainWindow mainWindow = new();
-                mainWindow.Show();
-                Close();
+                    if (string.IsNullOrEmpty(recipeName) || selectedTag != null)
+                    {
+                        using (AppDbContext context = new())
+                        {
+                            Recipe newRecipe = new();
+                            newRecipe.Name = recipeName;
+                            newRecipe.Ingredients = ingredients;
+
+                            newRecipe.TagId = selectedTag.TagId;
+
+                            new RecipeRepo(context).AddRecipe(newRecipe);
+                            context.SaveChanges();
+
+                            MainWindow mainWindow = new();
+                            mainWindow.Show();
+                            Close();
+                        }
+                    }
+                }
             }
+
+
         }
 
         private void btnAddToLvIngredient_Click(object sender, RoutedEventArgs e)
@@ -106,21 +137,10 @@ namespace TheYellowCarrot
             lbSelectedTag.Content = cbTags.Text.ToString();
             lbSelectedTag.Tag = selectedTag;
         }
+
+
     }
 }
 
 
-//using (AppDbContext context = new())
-//{
-//    List<Tag> tags = new TagRepo(context).GetTags();
 
-//    foreach (Tag tag in tags)
-//    {
-//        ComboBoxItem item = new();
-
-//        item.Content = tag.Name;
-//        item.Tag = tag;
-
-//        cbTags.Items.Add(item);
-//    }
-//}
