@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using TheYellowCarrot.Data;
@@ -47,28 +48,36 @@ namespace TheYellowCarrot
 
         private void btnDeleteRecipe_Click(object sender, RoutedEventArgs e)
         {
-            Recipe selectedRecipe = (Recipe)((ListViewItem)lvDisplayRecipes.SelectedItem).Tag;
-
-            if (selectedRecipe == null)
+            try
             {
-                MessageBox.Show("you need to select a recipe to delete it");
-            }
-            else
-            {
-                MessageBoxResult pr = MessageBox.Show("Are you sure you want to delete this recipe?", "?", MessageBoxButton.YesNo);
+                Recipe selectedRecipe = (Recipe)((ListViewItem)lvDisplayRecipes.SelectedItem).Tag;
 
-                if (pr == MessageBoxResult.Yes)
+                if (selectedRecipe == null)
                 {
-                    using (AppDbContext context = new())
+                    MessageBox.Show("you need to select a recipe to delete it");
+                }
+                else
+                {
+                    MessageBoxResult pr = MessageBox.Show("Are you sure you want to delete this recipe?", "?", MessageBoxButton.YesNo);
+
+                    if (pr == MessageBoxResult.Yes)
                     {
-                        new RecipeRepo(context).DeleteRecipe(selectedRecipe);
-                        context.SaveChanges();
+                        using (AppDbContext context = new())
+                        {
+                            new RecipeRepo(context).DeleteRecipe(selectedRecipe);
+                            context.SaveChanges();
+                        }
+
+                        UpdateUi();
                     }
 
-                    UpdateUi();
                 }
-
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         // Uppdaterar Ui
@@ -76,20 +85,28 @@ namespace TheYellowCarrot
         {
             lvDisplayRecipes.Items.Clear();
 
-            using (AppDbContext context = new())
+            try
             {
-                List<Recipe> recipes = new RecipeRepo(context).GetRecipes();
-
-                foreach (Recipe recipe in recipes)
+                using (AppDbContext context = new())
                 {
-                    ListViewItem item = new();
+                    List<Recipe> recipes = new RecipeRepo(context).GetRecipes();
 
-                    item.Content = recipe.Name;
-                    item.Tag = recipe;
+                    foreach (Recipe recipe in recipes)
+                    {
+                        ListViewItem item = new();
 
-                    lvDisplayRecipes.Items.Add(item);
+                        item.Content = recipe.Name;
+                        item.Tag = recipe;
+
+                        lvDisplayRecipes.Items.Add(item);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void lvDisplayRecipes_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -151,25 +151,33 @@ public partial class DetailsWindow : Window
     private void UpdateUi()
     {
         lvDisplayIngredients.Items.Clear();
-
-        if (_recipe != null)
+        try
         {
-            lbCurrentRecipeName.Content = _recipe.Name;
-
-            foreach (Ingredient ingredient in _recipe.Ingredients)
+            if (_recipe != null)
             {
-                ListViewItem item = new ListViewItem();
+                lbCurrentRecipeName.Content = _recipe.Name;
 
-                item.Content = ingredient.DisplayString;
-                item.Tag = ingredient;
+                foreach (Ingredient ingredient in _recipe.Ingredients)
+                {
+                    ListViewItem item = new ListViewItem();
 
-                lvDisplayIngredients.Items.Add(item);
+                    item.Content = ingredient.DisplayString;
+                    item.Tag = ingredient;
+
+                    lvDisplayIngredients.Items.Add(item);
+                }
+            }
+            if (_recipe?.Tags != null)
+            {
+                lbTag.Content = _recipe.Tags.Name.ToString();
             }
         }
-        if (_recipe?.Tags != null)
+        catch (Exception ex)
         {
-            lbTag.Content = _recipe.Tags.Name.ToString();
+            MessageBox.Show(ex.Message);
         }
+
+
     }
 
     // Sätter delete appen till enabled när man selectar ett item i listviewn

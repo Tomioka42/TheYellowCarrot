@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,49 +28,26 @@ namespace TheYellowCarrot
         // Click event som lägger till ett recept i databasen
         private void btnAddRecipe_Click(object sender, RoutedEventArgs e)
         {
-
-            if (ingredients.Count == 0 && txtRecipeName.Text.Length == 0)
+            try
             {
-                MessageBox.Show("You need to enter a name and some ingredients to add the recipe");
-            }
-            else if (ingredients.Count > 0 && txtRecipeName.Text.Length > 0)
-            {
-
-                if (cbTags.SelectedItem == null)
+                if (ingredients.Count == 0 && txtRecipeName.Text.Length == 0)
                 {
-                    string recipeName = txtRecipeName.Text;
-
-                    using (AppDbContext context = new())
-                    {
-                        Recipe newRecipe = new();
-                        newRecipe.Name = recipeName;
-                        newRecipe.Ingredients = ingredients;
-
-                        newRecipe.TagId = null;
-
-                        new RecipeRepo(context).AddRecipe(newRecipe);
-                        context.SaveChanges();
-
-                        MainWindow mainWindow = new();
-                        mainWindow.Show();
-                        Close();
-                    }
-
+                    MessageBox.Show("You need to enter a name and some ingredients to add the recipe");
                 }
-                else if (cbTags.SelectedItem != null)
+                else if (ingredients.Count > 0 && txtRecipeName.Text.Length > 0)
                 {
-                    string recipeName = txtRecipeName.Text;
-                    Tag selectedTag = (Tag)((ComboBoxItem)cbTags.SelectedItem).Tag;
 
-                    if (string.IsNullOrEmpty(recipeName) || selectedTag != null)
+                    if (cbTags.SelectedItem == null)
                     {
+                        string recipeName = txtRecipeName.Text;
+
                         using (AppDbContext context = new())
                         {
                             Recipe newRecipe = new();
                             newRecipe.Name = recipeName;
                             newRecipe.Ingredients = ingredients;
 
-                            newRecipe.TagId = selectedTag.TagId;
+                            newRecipe.TagId = null;
 
                             new RecipeRepo(context).AddRecipe(newRecipe);
                             context.SaveChanges();
@@ -78,8 +56,38 @@ namespace TheYellowCarrot
                             mainWindow.Show();
                             Close();
                         }
+
+                    }
+                    else if (cbTags.SelectedItem != null)
+                    {
+                        string recipeName = txtRecipeName.Text;
+                        Tag selectedTag = (Tag)((ComboBoxItem)cbTags.SelectedItem).Tag;
+
+                        if (string.IsNullOrEmpty(recipeName) || selectedTag != null)
+                        {
+                            using (AppDbContext context = new())
+                            {
+                                Recipe newRecipe = new();
+                                newRecipe.Name = recipeName;
+                                newRecipe.Ingredients = ingredients;
+
+                                newRecipe.TagId = selectedTag.TagId;
+
+                                new RecipeRepo(context).AddRecipe(newRecipe);
+                                context.SaveChanges();
+
+                                MainWindow mainWindow = new();
+                                mainWindow.Show();
+                                Close();
+                            }
+                        }
                     }
                 }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
 
@@ -87,22 +95,30 @@ namespace TheYellowCarrot
 
         private void btnAddToLvIngredient_Click(object sender, RoutedEventArgs e)
         {
-            Ingredient? ingredient = new();
-
-            ingredient.Name = txtIngredientName.Text.Trim();
-            ingredient.Quantity = txtIngredientQuantity.Text.Trim();
-            ingredients.Add(ingredient);
-            txtIngredientName.Clear();
-            txtIngredientQuantity.Clear();
-            lvIngredients.Items.Clear();
-
-            foreach (Ingredient i in ingredients)
+            try
             {
-                ListViewItem item = new();
-                lvIngredients.Items.Add(item);
-                item.Content = i.DisplayString;
-                item.Tag = i;
+                Ingredient? ingredient = new();
+
+                ingredient.Name = txtIngredientName.Text.Trim();
+                ingredient.Quantity = txtIngredientQuantity.Text.Trim();
+                ingredients.Add(ingredient);
+                txtIngredientName.Clear();
+                txtIngredientQuantity.Clear();
+                lvIngredients.Items.Clear();
+
+                foreach (Ingredient i in ingredients)
+                {
+                    ListViewItem item = new();
+                    lvIngredients.Items.Add(item);
+                    item.Content = i.DisplayString;
+                    item.Tag = i;
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
 
 
         }
@@ -113,20 +129,27 @@ namespace TheYellowCarrot
         {
             lvIngredients.Items.Clear();
             cbTags.Items.Clear();
-
-            using (AppDbContext context = new())
+            try
             {
-                List<Tag> tags = context.Tags.ToList();
-
-                foreach (Tag tag in tags)
+                using (AppDbContext context = new())
                 {
-                    ComboBoxItem cbItem = new();
-                    cbItem.Content = tag.Name;
-                    cbItem.Tag = tag;
+                    List<Tag> tags = context.Tags.ToList();
 
-                    cbTags.Items.Add(cbItem);
+                    foreach (Tag tag in tags)
+                    {
+                        ComboBoxItem cbItem = new();
+                        cbItem.Content = tag.Name;
+                        cbItem.Tag = tag;
+
+                        cbTags.Items.Add(cbItem);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
 
         }
 
