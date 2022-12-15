@@ -34,7 +34,7 @@ namespace TheYellowCarrot
                 {
                     MessageBox.Show("You need to enter a name and some ingredients to add the recipe");
                 }
-                else if (ingredients.Count > 0 && txtRecipeName.Text.Length > 0)
+                else if (ingredients.Count > 0 && txtRecipeName.Text.Length > 3)
                 {
 
                     if (cbTags.SelectedItem == null)
@@ -95,6 +95,8 @@ namespace TheYellowCarrot
 
         private void btnAddToLvIngredient_Click(object sender, RoutedEventArgs e)
         {
+            // Om man lägger till en ingrediens som inte har ett namn eller quantity
+            // så blir det en tom sträng i ingredients listan. Dessa är tänkt att göra så att usern kan dela upp sitt recept
             try
             {
                 Ingredient? ingredient = new();
