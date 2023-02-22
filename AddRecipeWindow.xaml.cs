@@ -34,7 +34,7 @@ namespace TheYellowCarrot
                 {
                     MessageBox.Show("You need to enter a name and some ingredients to add the recipe");
                 }
-                else if (ingredients.Count > 0 && txtRecipeName.Text.Length > 3)
+                else if (ingredients.Count > 0 && txtRecipeName.Text.Length > 0)
                 {
 
                     if (cbTags.SelectedItem == null)
